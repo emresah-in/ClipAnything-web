@@ -1,6 +1,6 @@
 flask==3.0.2
 openai==1.12.0
-whisper==1.1.10
+openai-whisper==20231117
 moviepy==1.0.3
 requests==2.31.0
 Werkzeug==3.0.1
