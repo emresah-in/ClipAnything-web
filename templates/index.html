@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ClipAnything Web</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="number"], textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input[type="file"] {
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .results {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+        }
+        .download-link {
+            display: inline-block;
+            margin: 5px;
+            padding: 8px 15px;
+            background-color: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .download-link:hover {
+            background-color: #218838;
+        }
+        .progress {
+            display: none;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .progress.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ClipAnything Web</h1>
+        <form action="/process" method="post" enctype="multipart/form-data" id="uploadForm">
+            <div class="form-group">
+                <label for="video">Upload Video:</label>
+                <input type="file" id="video" name="video" accept="video/*" required>
+            </div>
+            <div class="form-group">
+                <label for="video_url">Or Enter Video URL:</label>
+                <input type="text" id="video_url" name="video_url" placeholder="https://example.com/video.mp4">
+            </div>
+            <div class="form-group">
+                <label for="num_clips">Number of Clips:</label>
+                <input type="number" id="num_clips" name="num_clips" min="1" max="10" value="3" required>
+            </div>
+            <div class="form-group">
+                <label for="topics">Topics (one per line):</label>
+                <textarea id="topics" name="topics" rows="4" placeholder="Topic 1&#10;Topic 2&#10;Topic 3" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="clip_length">Clip Length (seconds):</label>
+                <input type="number" id="clip_length" name="clip_length" min="5" max="300" value="30" required>
+            </div>
+            <button type="submit">Process Video</button>
+        </form>
+        
+        <div class="progress" id="progress">
+            <p>Processing video... This may take a few minutes.</p>
+            <img src="https://media.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif" alt="Loading">
+        </div>
+        
+        {% if results %}
+        <div class="results">
+            <h2>Results</h2>
+            {% if transcript_file %}
+            <a href="{{ url_for('download_file', filename=transcript_file) }}" class="download-link">Download Transcript</a>
+            {% endif %}
+            {% if clips %}
+            {% for clip in clips %}
+            <a href="{{ url_for('download_file', filename=clip) }}" class="download-link">Download Clip {{ loop.index }}</a>
+            {% endfor %}
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        document.getElementById('uploadForm').onsubmit = function() {
+            document.getElementById('progress').classList.add('active');
+        };
+    </script>
+</body>
+</html>
